@@ -1,6 +1,8 @@
 package vega.samuel.popcornfactory
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -20,11 +22,31 @@ class DetallePelicula : AppCompatActivity() {
         }
 
         val bundle = intent.extras
+        var ns = 0
+        var id = -1
 
         if (bundle != null) {
+            ns = bundle.getInt("numberSeats")
+            id = bundle.getInt("pos")
+
             findViewById<ImageView>(R.id.iv_pelicula_imagen).setImageResource(bundle.getInt("header"))
             findViewById<TextView>(R.id.tv_nombre_pelicula).text = bundle.getString("nombre")
             findViewById<TextView>(R.id.tv_pelicula_desc).text = bundle.getString("sinopsis")
+            findViewById<TextView>(R.id.seats_left).text = "${ns} seats available"
+        }
+
+        if(ns == 0) {
+            findViewById<Button>(R.id.btn_tickets).isEnabled = false
+        }else {
+            findViewById<Button>(R.id.btn_tickets).isEnabled = true
+            findViewById<Button>(R.id.btn_tickets).setOnClickListener {
+                val intent = Intent(this, SeatSelection::class.java)
+
+                intent.putExtra("movie", id)
+                intent.putExtra("name", findViewById<TextView>(R.id.tv_nombre_pelicula).text)
+
+                this.startActivity(intent)
+            }
         }
     }
 }
